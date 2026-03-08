@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>For You ❤️</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#6fa8ff,#ff9ad5);
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+color:white;
+}
+
+/* Slides */
+
+.slide{
+position:absolute;
+}
+
+.hidden{
+display:none;
+}
+
+/* Buttons */
+
+button{
+padding:12px 25px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:white;
+color:#ff4fa3;
+cursor:pointer;
+margin-top:20px;
+}
+
+/* Gift */
+
+.gift{
+font-size:120px;
+cursor:pointer;
+animation:float 2s infinite;
+}
+
+@keyframes float{
+0%{transform:translateY(0)}
+50%{transform:translateY(-15px)}
+100%{transform:translateY(0)}
+}
+
+/* Fireworks canvas */
+
+#fireworks{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:1;
+}
+
+/* Final message card */
+
+.finalCard{
+position:absolute;
+z-index:2;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
+padding:40px 60px;
+border-radius:20px;
+font-size:26px;
+}
+
+/* Floating hearts */
+
+.heart{
+position:absolute;
+font-size:20px;
+animation:rise 5s linear forwards;
+z-index:2;
+}
+
+@keyframes rise{
+0%{transform:translateY(0);opacity:1}
+100%{transform:translateY(-900px);opacity:0}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Slide 1 -->
+
+<div id="slide1" class="slide">
+<h1>Hi! I want to tell you something</h1>
+<button onclick="nextSlide(1)">Continue</button>
+</div>
+
+<!-- Slide 2 -->
+
+<div id="slide2" class="slide hidden">
+<h1>Idk how to tell you this but you can press continue for it</h1>
+<button onclick="nextSlide(2)">Continue</button>
+</div>
+
+<!-- Slide 3 -->
+
+<div id="slide3" class="slide hidden">
+<h1>Click the Gift 🎁</h1>
+<div class="gift" onclick="openGift()">🎁</div>
+</div>
+
+<!-- Slide 4 -->
+
+<div id="slide4" class="slide hidden">
+
+<canvas id="fireworks"></canvas>
+
+<div class="finalCard">
+<h1>Happy Women's Day ❤️</h1>
+<p>You are the most special girl in my life.</p>
+<p>I hope this surprise makes you smile 💙💗</p>
+</div>
+
+</div>
+
+<script>
+
+/* Slide switching */
+
+function nextSlide(n){
+document.getElementById("slide"+n).classList.add("hidden")
+document.getElementById("slide"+(n+1)).classList.remove("hidden")
+}
+
+/* Gift click */
+
+function openGift(){
+document.getElementById("slide3").classList.add("hidden")
+document.getElementById("slide4").classList.remove("hidden")
+
+launchFireworks()
+floatingHearts()
+}
+
+/* Fireworks system */
+
+const canvas=document.getElementById("fireworks")
+const ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let particles=[]
+
+class Particle{
+
+constructor(x,y,color){
+
+this.x=x
+this.y=y
+this.color=color
+this.radius=2+Math.random()*2
+this.speedX=(Math.random()-0.5)*7
+this.speedY=(Math.random()-0.5)*7
+this.gravity=0.05
+this.life=100
+
+}
+
+update(){
+
+this.x+=this.speedX
+this.y+=this.speedY
+this.speedY+=this.gravity
+this.life--
+
+}
+
+draw(){
+
+ctx.beginPath()
+ctx.arc(this.x,this.y,this.radius,0,Math.PI*2)
+ctx.fillStyle=this.color
+ctx.fill()
+
+}
+
+}
+
+function launchFireworks(){
+
+setInterval(()=>{
+
+let x=Math.random()*canvas.width
+let y=Math.random()*canvas.height/2
+
+let colors=["#ff77c8","#6fa8ff","#ffffff"]
+
+for(let i=0;i<120;i++){
+
+particles.push(
+new Particle(
+x,
+y,
+colors[Math.floor(Math.random()*colors.length)]
+)
+)
+
+}
+
+},1200)
+
+animate()
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+particles.forEach((p,i)=>{
+
+p.update()
+p.draw()
+
+if(p.life<=0){
+
+particles.splice(i,1)
+
+}
+
+})
+
+requestAnimationFrame(animate)
+
+}
+
+/* Floating hearts */
+
+function floatingHearts(){
+
+setInterval(()=>{
+
+let heart=document.createElement("div")
+
+heart.className="heart"
+
+heart.innerHTML=Math.random()>0.5?"💗":"💙"
+
+heart.style.left=Math.random()*100+"vw"
+heart.style.bottom="0"
+
+document.body.appendChild(heart)
+
+setTimeout(()=>heart.remove(),5000)
+
+},250)
+
+}
+
+</script>
+
+</body>
+</html>
